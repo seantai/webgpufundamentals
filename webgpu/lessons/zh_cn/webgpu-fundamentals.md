@@ -39,11 +39,11 @@ WebGPU 是一个极其低层次的 API. 虽然您可以制作一些小型示例�
 
 [^primitives]: 有以下 5 种模式：
 
-    -   `'point-list'`: 对于每个顶点，绘制一个点
-    -   `'line-list'`: 每 2 个点绘制一条线
-    -   `'line-strip'`: 绘制最新点与前一点的连接线
-    -   `'triangle-list'`: 每 3 个点绘制一个三角形 (**默认**)
-    -   `'triangle-strip'`: 对于每个新位置，从它和最后 2 个位置中画出一个三角形
+    - `'point-list'`: 对于每个顶点，绘制一个点
+    - `'line-list'`: 每 2 个点绘制一条线
+    - `'line-strip'`: 绘制最新点与前一点的连接线
+    - `'triangle-list'`: 每 3 个点绘制一个三角形 (**默认**)
+    - `'triangle-strip'`: 对于每个新位置，从它和最后 2 个位置中画出一个三角形
 
 片段着色器负责计算颜色 [^fragment-output]。 在绘制三角形时，GPU 会为每个要绘制的像素调用片段着色器。片段着色器会返回一种颜色。
 
@@ -63,17 +63,17 @@ WebGPU 是一个极其低层次的 API. 虽然您可以制作一些小型示例�
 
 上图的注意事项：
 
--   **管道(Pipeline)**. 它包含 GPU 将运行的顶点着色器和片段着色器。您也可以在管道(Pipeline)中加入计算着色器。
+- **管道(Pipeline)**. 它包含 GPU 将运行的顶点着色器和片段着色器。您也可以在管道(Pipeline)中加入计算着色器。
 
--   着色器通过**绑定组(Bind Groups)**间接引用资源（缓冲区(buffer)、纹理(texture)、采样器(sampler)）。
+- 着色器通过**绑定组(Bind Groups)**间接引用资源（缓冲区(buffer)、纹理(texture)、采样器(sampler)）。
 
--   管道定义了通过内部状态间接引用缓冲区的属性
+- 管道定义了通过内部状态间接引用缓冲区的属性
 
--   属性从缓冲区中提取数据，并将数据输入顶点着色器
+- 属性从缓冲区中提取数据，并将数据输入顶点着色器
 
--   顶点着色器可将数据输入片段着色器
+- 顶点着色器可将数据输入片段着色器
 
--   片段着色器通过 render pass description 间接写入纹理
+- 片段着色器通过 render pass description 间接写入纹理
 
 要在 GPU 上执行着色器，需要创建所有这些资源并设置状态。创建资源相对简单。有趣的是，大多数 WebGPU 资源在创建后都无法更改。您可以更改它们的内容，但是无法更改它们的大小、用途、格式等等。如果要更改这些内容，需要创建一个新资源并销毁旧资源。
 
@@ -144,11 +144,11 @@ WebGPU 能够绘制三角形到 [纹理](webgpu-textures.html). 在本文中，�
 
 1. 顶点着色器
 
-    顶点着色器是计算顶点位置的函数，用于绘制三角形/线/点
+   顶点着色器是计算顶点位置的函数，用于绘制三角形/线/点
 
 2. 片元着色器
 
-    片段着色器是在绘制三角形/线/点时计算每个待绘制/光栅化像素的颜色（或其他数据）的函数
+   片段着色器是在绘制三角形/线/点时计算每个待绘制/光栅化像素的颜色（或其他数据）的函数
 
 让我们从一个非常小的 WebGPU 程序开始，画一个三角形。
 
@@ -164,9 +164,9 @@ WebGPU 能够绘制三角形到 [纹理](webgpu-textures.html). 在本文中，�
 <canvas></canvas> +
 <script type="module">
 
-    ... javascript goes here ...
+  ... javascript goes here ...
 
-    +
+  +
 </script>
 ```
 
@@ -176,12 +176,12 @@ WebGPU 是异步 API，因此在异步函数中使用最为方便。我们首先
 
 ```js
 async function main() {
-    const adapter = await navigator.gpu?.requestAdapter();
-    const device = await adapter?.requestDevice();
-    if (!device) {
-        fail('need a browser that supports WebGPU');
-        return;
-    }
+  const adapter = await navigator.gpu?.requestAdapter();
+  const device = await adapter?.requestDevice();
+  if (!device) {
+    fail("need a browser that supports WebGPU");
+    return;
+  }
 }
 main();
 ```
@@ -199,12 +199,12 @@ main();
 
 ```js
 // Get a WebGPU context from the canvas and configure it
-const canvas = document.querySelector('canvas');
-const context = canvas.getContext('webgpu');
+const canvas = document.querySelector("canvas");
+const context = canvas.getContext("webgpu");
 const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
 context.configure({
-    device,
-    format: presentationFormat,
+  device,
+  format: presentationFormat,
 });
 ```
 
@@ -217,8 +217,8 @@ context.configure({
 
 ```js
 const module = device.createShaderModule({
-    label: 'our hardcoded red triangle shaders',
-    code: `
+  label: "our hardcoded red triangle shaders",
+  code: `
       @vertex fn vs(
         @builtin(vertex_index) vertexIndex : u32
       ) -> @builtin(position) vec4f {
@@ -302,17 +302,17 @@ WebGPU 中的位置需要在*裁剪空间*(_clip space_)中返回，其中 X 从
 
 ```js
 const pipeline = device.createRenderPipeline({
-    label: 'our hardcoded red triangle pipeline',
-    layout: 'auto',
-    vertex: {
-        module,
-        entryPoint: 'vs',
-    },
-    fragment: {
-        module,
-        entryPoint: 'fs',
-        targets: [{ format: presentationFormat }],
-    },
+  label: "our hardcoded red triangle pipeline",
+  layout: "auto",
+  vertex: {
+    module,
+    entryPoint: "vs",
+  },
+  fragment: {
+    module,
+    entryPoint: "fs",
+    targets: [{ format: presentationFormat }],
+  },
 });
 ```
 
@@ -326,15 +326,15 @@ const pipeline = device.createRenderPipeline({
 
 ```js
 const renderPassDescriptor = {
-    label: 'our basic canvas renderPass',
-    colorAttachments: [
-        {
-            // view: <- to be filled out when we render
-            clearValue: [0.3, 0.3, 0.3, 1],
-            loadOp: 'clear',
-            storeOp: 'store',
-        },
-    ],
+  label: "our basic canvas renderPass",
+  colorAttachments: [
+    {
+      // view: <- to be filled out when we render
+      clearValue: [0.3, 0.3, 0.3, 1],
+      loadOp: "clear",
+      storeOp: "store",
+    },
+  ],
 };
 ```
 
@@ -344,23 +344,23 @@ const renderPassDescriptor = {
 
 ```js
 function render() {
-    // Get the current texture from the canvas context and
-    // set it as the texture to render to.
-    renderPassDescriptor.colorAttachments[0].view = context
-        .getCurrentTexture()
-        .createView();
+  // Get the current texture from the canvas context and
+  // set it as the texture to render to.
+  renderPassDescriptor.colorAttachments[0].view = context
+    .getCurrentTexture()
+    .createView();
 
-    // make a command encoder to start encoding commands
-    const encoder = device.createCommandEncoder({ label: 'our encoder' });
+  // make a command encoder to start encoding commands
+  const encoder = device.createCommandEncoder({ label: "our encoder" });
 
-    // make a render pass encoder to encode render specific commands
-    const pass = encoder.beginRenderPass(renderPassDescriptor);
-    pass.setPipeline(pipeline);
-    pass.draw(3); // call our vertex shader 3 times
-    pass.end();
+  // make a render pass encoder to encode render specific commands
+  const pass = encoder.beginRenderPass(renderPassDescriptor);
+  pass.setPipeline(pipeline);
+  pass.draw(3); // call our vertex shader 3 times
+  pass.end();
 
-    const commandBuffer = encoder.finish();
-    device.queue.submit([commandBuffer]);
+  const commandBuffer = encoder.finish();
+  device.queue.submit([commandBuffer]);
 }
 
 render();
@@ -399,11 +399,11 @@ render();
 
 现在，我们已经看到了一个非常小的 WebGPU 工作示例。显而易见，在着色器中硬编码三角形并不灵活。我们需要一些提供数据的方法，我们将在接下来的文章中介绍这些方法。从上面的代码中可以看出以下几点：
 
--   WebGPU 只是运行着色器。你可以在其中填充代码，做一些有用的事情
--   着色器在着色器模块中指定，然后转化为流水线
--   WebGPU 可以绘制三角形
--   WebGPU 可绘制纹理（我们恰巧从画布上获取了纹理）
--   WebGPU 的工作方式是对命令进行编码，然后提交命令。
+- WebGPU 只是运行着色器。你可以在其中填充代码，做一些有用的事情
+- 着色器在着色器模块中指定，然后转化为流水线
+- WebGPU 可以绘制三角形
+- WebGPU 可绘制纹理（我们恰巧从画布上获取了纹理）
+- WebGPU 的工作方式是对命令进行编码，然后提交命令。
 
 # <a id="a-run-computations-on-the-gpu"></a>在 GPU 上进行计算
 
@@ -413,7 +413,7 @@ render();
 
 ```js
 async function main() {
-  const adapter = await gpu?.requestAdapter();
+  const adapter = await navigator.gpu?.requestAdapter();
   const device = await adapter?.requestDevice();
   if (!device) {
     fail('need a browser that supports WebGPU');
@@ -425,8 +425,8 @@ async function main() {
 
 ```js
 const module = device.createShaderModule({
-    label: 'doubling compute module',
-    code: `
+  label: "doubling compute module",
+  code: `
       @group(0) @binding(0) var<storage, read_write> data: array<f32>;
 
       @compute @workgroup_size(1) fn computeSomething(
@@ -463,30 +463,30 @@ const module = device.createShaderModule({
 ```js
 // pseudo code
 function dispatchWorkgroups(width, height, depth) {
-    for (z = 0; z < depth; ++z) {
-        for (y = 0; y < height; ++y) {
-            for (x = 0; x < width; ++x) {
-                const workgroup_id = { x, y, z };
-                dispatchWorkgroup(workgroup_id);
-            }
-        }
+  for (z = 0; z < depth; ++z) {
+    for (y = 0; y < height; ++y) {
+      for (x = 0; x < width; ++x) {
+        const workgroup_id = { x, y, z };
+        dispatchWorkgroup(workgroup_id);
+      }
     }
+  }
 }
 
 function dispatchWorkgroup(workgroup_id) {
-    // from @workgroup_size in WGSL
-    const workgroup_size = shaderCode.workgroup_size;
-    const { x: width, y: height, z: depth } = workgroup.size;
-    for (z = 0; z < depth; ++z) {
-        for (y = 0; y < height; ++y) {
-            for (x = 0; x < width; ++x) {
-                const local_invocation_id = { x, y, z };
-                const global_invocation_id =
-                    workgroup_id * workgroup_size + local_invocation_id;
-                computeShader(global_invocation_id);
-            }
-        }
+  // from @workgroup_size in WGSL
+  const workgroup_size = shaderCode.workgroup_size;
+  const { x: width, y: height, z: depth } = workgroup.size;
+  for (z = 0; z < depth; ++z) {
+    for (y = 0; y < height; ++y) {
+      for (x = 0; x < width; ++x) {
+        const local_invocation_id = { x, y, z };
+        const global_invocation_id =
+          workgroup_id * workgroup_size + local_invocation_id;
+        computeShader(global_invocation_id);
+      }
     }
+  }
 }
 ```
 
@@ -495,19 +495,19 @@ function dispatchWorkgroup(workgroup_id) {
 ```js
 // pseudo code
 function dispatchWorkgroups(width, height, depth) {
-    for (z = 0; z < depth; ++z) {
-        for (y = 0; y < height; ++y) {
-            for (x = 0; x < width; ++x) {
-                const workgroup_id = { x, y, z };
-                dispatchWorkgroup(workgroup_id);
-            }
-        }
+  for (z = 0; z < depth; ++z) {
+    for (y = 0; y < height; ++y) {
+      for (x = 0; x < width; ++x) {
+        const workgroup_id = { x, y, z };
+        dispatchWorkgroup(workgroup_id);
+      }
     }
+  }
 }
 
 function dispatchWorkgroup(workgroup_id) {
-    const global_invocation_id = workgroup_id;
-    computeShader(global_invocation_id);
+  const global_invocation_id = workgroup_id;
+  computeShader(global_invocation_id);
 }
 ```
 
@@ -524,12 +524,12 @@ function dispatchWorkgroup(workgroup_id) {
 
 ```js
 const pipeline = device.createComputePipeline({
-    label: 'doubling compute pipeline',
-    layout: 'auto',
-    compute: {
-        module,
-        entryPoint: 'computeSomething',
-    },
+  label: "doubling compute pipeline",
+  layout: "auto",
+  compute: {
+    module,
+    entryPoint: "computeSomething",
+  },
 });
 ```
 
@@ -549,12 +549,10 @@ const input = new Float32Array([1, 3, 5]);
 // create a buffer on the GPU to hold our computation
 // input and output
 const workBuffer = device.createBuffer({
-    label: 'work buffer',
-    size: input.byteLength,
-    usage:
-        GPUBufferUsage.STORAGE |
-        GPUBufferUsage.COPY_SRC |
-        GPUBufferUsage.COPY_DST,
+  label: "work buffer",
+  size: input.byteLength,
+  usage:
+    GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
 });
 // Copy our input data to that buffer
 device.queue.writeBuffer(workBuffer, 0, input);
@@ -573,9 +571,9 @@ device.queue.writeBuffer(workBuffer, 0, input);
 ```js
 // create a buffer on the GPU to get a copy of the results
 const resultBuffer = device.createBuffer({
-    label: 'result buffer',
-    size: input.byteLength,
-    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+  label: "result buffer",
+  size: input.byteLength,
+  usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
 });
 ```
 
@@ -587,9 +585,9 @@ const resultBuffer = device.createBuffer({
 // Setup a bindGroup to tell the shader which
 // buffer to use for the computation
 const bindGroup = device.createBindGroup({
-    label: 'bindGroup for work buffer',
-    layout: pipeline.getBindGroupLayout(0),
-    entries: [{ binding: 0, resource: { buffer: workBuffer } }],
+  label: "bindGroup for work buffer",
+  layout: pipeline.getBindGroupLayout(0),
+  entries: [{ binding: 0, resource: { buffer: workBuffer } }],
 });
 ```
 
@@ -600,10 +598,10 @@ const bindGroup = device.createBindGroup({
 ```js
 // Encode commands to do the computation
 const encoder = device.createCommandEncoder({
-    label: 'doubling encoder',
+  label: "doubling encoder",
 });
 const pass = encoder.beginComputePass({
-    label: 'doubling compute pass',
+  label: "doubling compute pass",
 });
 pass.setPipeline(pipeline);
 pass.setBindGroup(0, bindGroup);
@@ -639,8 +637,8 @@ device.queue.submit([commandBuffer]);
 await resultBuffer.mapAsync(GPUMapMode.READ);
 const result = new Float32Array(resultBuffer.getMappedRange());
 
-console.log('input', input);
-console.log('result', result);
+console.log("input", input);
+console.log("result", result);
 
 resultBuffer.unmap();
 ```
@@ -663,16 +661,16 @@ WebGPU 编程的特别之处在于这些功能（顶点着色器、片段着色�
 
 ```html
 <style>
-    html,
-    body {
-        margin: 0; /* remove the default margin          */
-        height: 100%; /* make the html,body fill the page   */
-    }
-    canvas {
-        display: block; /* make the canvas act like a block   */
-        width: 100%; /* make the canvas fill its container */
-        height: 100%;
-    }
+  html,
+  body {
+    margin: 0; /* remove the default margin          */
+    height: 100%; /* make the html,body fill the page   */
+  }
+  canvas {
+    display: block; /* make the canvas act like a block   */
+    width: 100%; /* make the canvas fill its container */
+    height: 100%;
+  }
 </style>
 ```
 
@@ -710,12 +708,12 @@ WebGPU 编程的特别之处在于这些功能（顶点着色器、片段着色�
 
 在以下文章中，我们将介绍向着色器传递数据的各种方法。
 
--   [inter-stage variables](webgpu-inter-stage-variables.html)
--   [uniforms](webgpu-uniforms.html)
--   [storage buffers](webgpu-storage-buffers.html)
--   [vertex buffers](webgpu-vertex-buffers.html)
--   [textures](webgpu-textures.html)
--   [constants](webgpu-constants.html)
+- [inter-stage variables](webgpu-inter-stage-variables.html)
+- [uniforms](webgpu-uniforms.html)
+- [storage buffers](webgpu-storage-buffers.html)
+- [vertex buffers](webgpu-vertex-buffers.html)
+- [textures](webgpu-textures.html)
+- [constants](webgpu-constants.html)
 
 我们接着介绍 [WGSL 的基础知识](webgpu-wgsl.html)。
 
